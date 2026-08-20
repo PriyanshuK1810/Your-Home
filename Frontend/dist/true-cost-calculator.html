@@ -15,7 +15,7 @@
   <link rel="icon" type="image/svg+xml" href="logo-icon.svg" />
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=3" />
 </head>
 <body>
 
@@ -94,6 +94,22 @@
             <span>Property</span>
             <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"></polyline></svg>
           </a>
+          <div class="dropdown-menu dropdown-menu--narrow">
+            <a href="/#browse-properties" class="dropdown-item">
+              <span class="dropdown-item-icon">🏠</span>
+              <div class="dropdown-item-text">
+                <strong>Buy Properties</strong>
+                <span>Explore verified homes &amp; apartments</span>
+              </div>
+            </a>
+            <a href="/#browse-properties" class="dropdown-item">
+              <span class="dropdown-item-icon">🏢</span>
+              <div class="dropdown-item-text">
+                <strong>Rent Properties</strong>
+                <span>Find apartments with high yields</span>
+              </div>
+            </a>
+          </div>
         </div>
 
         <a href="insights.html" class="nav-link">Insights</a>
@@ -686,6 +702,7 @@
   </footer>
 
   <!-- True Cost Calculation Logic Script -->
+  <script src="navbar.js"></script>
   <script src="true-cost.js"></script>
 
 </body>

@@ -15,7 +15,7 @@ export default function Hero({ onOpenAffordability }) {
     <section className="section-card hero-section" id="home">
       <div className="hero-container">
         {/* Left Hero Column */}
-        <div className="hero-left">
+        <div className="hero-left animate-fade-in-up">
           <h1 className="hero-title">
             Make Every <br />
             Property Decision <br />
@@ -64,7 +64,7 @@ export default function Hero({ onOpenAffordability }) {
         </div>
 
         {/* Right Hero Column with Floating Card */}
-        <div className="hero-right">
+        <div className="hero-right animate-fade-in-right">
           <div className="hero-img-wrapper">
             <img 
               src={heroImg} 

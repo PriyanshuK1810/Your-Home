@@ -42,10 +42,10 @@
   --font-display: 'Outfit', sans-serif;
 
   /* Layout & Shadows */
-  --max-width: 1240px;
+  --max-width: 1280px;
   --radius-sm: 8px;
   --radius-md: 12px;
-  --radius-lg: 16px;
+  --radius-lg: 20px;
   --radius-full: 9999px;
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.05), 0 10px 25px -5px rgba(0, 0, 0, 0.04);
   --shadow-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 12px 28px -6px rgba(0, 0, 0, 0.08);
@@ -96,23 +96,30 @@ input, select {
    NAVIGATION BAR
    -------------------------------------------------------------------------- */
 .navbar {
-  background-color: #ffffff;
-  border-bottom: 1px solid var(--border-light);
   position: sticky;
-  top: 0;
-  z-index: 50;
-  width: 100%;
+  top: 12px;
+  z-index: 1000;
+  max-width: 1280px;
+  margin: 16px auto 0 auto;
+  width: calc(100% - 48px);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: 0 2px 8px rgba(15, 82, 55, 0.04), 0 8px 24px rgba(0, 0, 0, 0.03);
 }
 
 .nav-container {
-  max-width: var(--max-width);
-  height: 70px;
+  width: 100%;
+  height: auto;
+  min-height: 56px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 12px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 /* Brand Logo */
@@ -122,6 +129,7 @@ input, select {
   gap: 0.75rem;
   text-decoration: none;
   transition: opacity 0.15s ease, transform 0.15s ease;
+  flex-shrink: 0;
 }
 
 .brand:hover {
@@ -130,7 +138,7 @@ input, select {
 }
 
 .brand-logo-img {
-  height: 46px;
+  height: 36px;
   width: auto;
   display: block;
   object-fit: contain;
@@ -186,18 +194,21 @@ input, select {
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 1.75rem;
+  gap: 24px;
+  list-style: none;
 }
 
 .nav-link {
-  font-size: 0.92rem;
-  font-weight: 600;
-  color: var(--text-body);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted, #576b60);
   display: flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 4px;
+  padding: 6px 0;
+  position: relative;
   transition: color 0.15s ease;
-  padding: 0.5rem 0;
+  text-decoration: none;
 }
 
 .nav-link:hover {
@@ -217,45 +228,51 @@ input, select {
   transition: transform 0.2s ease;
 }
 
-.nav-dropdown:hover .dropdown-chevron {
-  transform: translateY(2px);
+.nav-dropdown:hover .dropdown-chevron,
+.nav-dropdown.dropdown-open .dropdown-chevron {
+  transform: translateY(2px) rotate(180deg);
 }
 
 .nav-dropdown.active .nav-link {
   color: var(--primary-green);
+  font-weight: 700;
 }
 
 .active-indicator {
   position: absolute;
-  bottom: -15px;
+  bottom: 0px;
   left: 0;
   right: 0;
-  height: 3px;
+  height: 2.5px;
   background-color: var(--primary-green);
-  border-radius: 3px 3px 0 0;
+  border-radius: 9999px;
 }
 
 /* Nav Actions */
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
+  gap: 12px;
 }
 
 .icon-btn {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
+  border: 1px solid var(--border-light, #e2eae5);
+  background: #ffffff;
+  color: var(--text-main, #13231c);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-body);
-  transition: background 0.15s ease, color 0.15s ease;
+  position: relative;
+  transition: all 0.2s ease;
 }
 
 .icon-btn:hover {
-  background-color: #f1f5f9;
+  border-color: var(--primary-green);
   color: var(--primary-green);
+  background-color: var(--mint-bg, #f0fdf4);
 }
 
 .icon-btn svg {
@@ -1164,6 +1181,20 @@ input, select {
    ========================================================================== */
 .nav-dropdown {
   position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-chevron {
+  width: 14px;
+  height: 14px;
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+}
+
+.nav-dropdown:hover .dropdown-chevron,
+.nav-dropdown.dropdown-open .dropdown-chevron {
+  transform: translateY(2px) rotate(180deg);
 }
 
 .dropdown-menu {
@@ -1180,8 +1211,26 @@ input, select {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Show: instant. Hide: minimum 0.5s delay so menu doesn't vanish on accidental mouseout or moving between items */
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: 0.5s;
   z-index: 100;
+}
+
+/* Invisible bridge so cursor doesn't leave dropdown when moving between trigger and menu */
+.dropdown-menu::before {
+  content: '';
+  position: absolute;
+  top: -15px;
+  left: 0;
+  right: 0;
+  height: 15px;
+}
+
+.dropdown-menu--narrow {
+  width: 240px;
 }
 
 .nav-dropdown:hover .dropdown-menu,
@@ -1190,6 +1239,8 @@ input, select {
   visibility: visible;
   pointer-events: auto;
   transform: translateX(-50%) translateY(0);
+  /* Override close delay — show instantly on hover or tap */
+  transition-delay: 0s;
 }
 
 .dropdown-item {
@@ -4114,12 +4165,12 @@ input, select {
 
 .nav-item-active-wrap .active-indicator {
   position: absolute;
-  bottom: -23px;
+  bottom: 0px;
   left: 0;
   right: 0;
-  height: 3px;
+  height: 2.5px;
   background-color: var(--primary-green);
-  border-radius: 3px 3px 0 0;
+  border-radius: 9999px;
 }
 
 /* Ambient Background Glow */
@@ -6544,7 +6595,7 @@ input, select {
    ========================================================================== */
 
 .insights-page-container {
-  max-width: 1240px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 2rem 1.5rem 4rem 1.5rem;
 }
