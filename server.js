@@ -1,6 +1,10 @@
+require("dotenv").config();
+
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
+
+const authRoutes = require('./backend/routes/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -9,6 +13,9 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+//Authentication Routes
+app.use('/api', authRoutes);
 
 const fs = require('fs');
 
