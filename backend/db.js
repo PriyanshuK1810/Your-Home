@@ -1,15 +1,20 @@
-const Database = require('better-sqlite3');
-const db = new Database('login_data.db');
+require("dotenv").config();
 
-db.prepare(`
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        email TEXT NOT NULL UNIQUE,
-        username TEXT NOT NULL UNIQUE,
-        password TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-`).run();
+const { Pool } = require("pg");
 
-module.exports = db;
+const pool = new Pool({
+    connectionString : process.env.DATABASE_URL,
+    ssl : {
+        rejectUnauthorized : false
+    }
+});
+
+pool.on("connect", () => {
+    console.log("Connected To CockroachDB");
+});
+
+pool.on("error", (err) => {
+    console.log("CockroachDB Connection Error: ",err);
+});
+
+module.exports = pool;

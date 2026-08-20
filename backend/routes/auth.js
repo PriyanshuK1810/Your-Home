@@ -5,73 +5,112 @@ const {
     comparePassword,
     generateToken
  } = require("../utils/auth");
-const e = require("express");
+const { Result } = require("pg");
 
 const router = express.Router()
 
+//Register
+
 router.post("/register", async (req,res) => {
     try{
-        const { name, email, password, username } = req.body;
+        const { name, username, email, password } = req.body;
+        //Check Required fields for null value
         if(!name || !username || !email || !password){
             return res.status(400).json({
-                message : "Name, Email, Username and Passwoed are required"
+                message : "All Fields are required"
             });
         }
 
-        if (!/^[a-zA-Z0-9_.]+$/.test(username)) {
+        //Validate Username
+        const usernameRegex = /^[a-zA-Z0-9_.]+$/;
+        if (!usernameRegex.test(username)) {
             return res.status(400).json({
                 message : "Invalid Username"
             });
         }
 
-        const hashedPassword = await hashPassword(password)
+        //Check for existing email
+        const existingemail = await db.query(
+            "SELECT id FROM users WHERE email = $1",
+            [email]
+        );
 
-        const statement = db.prepare(`
-            Insert into users (name, email, username, password)
-            values (?, ?, ?, ?)
-            `);
-        const result = statement.run(name, email, username, hashedPassword)
-
-        return res.status(201).json({
-            message : "User Registered Successfully",
-            userId : result.lastInsertRowid
-        });
-    }
-    catch (error) {
-        if (error.code === 'SQLITE_CONSTRAINT_UNIQUE'){
+        if (existingemail.rows.length > 0) {
             return res.status(409).json({
-                message : "Email already registered"
-            });
-        };
-        console.error(error);
-        return res.status(500).json({
-            message : "Interval server error"
-        })
-    }
-});
-
-router.post("/login", async (req,res) => {
-    try{
-        const { email, password } = req.body;
-        
-        //Basic Validation
-        if ( !email || !password ) {
-            return res.status(400).json({
-                message : "Email and Password are Required"
+                message : "Email Already Registered"
             });
         }
 
-        //Finding User By Email
-        const user = db.prepare(
-            "SELECT * FROM users WHERE email = ?"
-        ).get(email);
+        //Check if username exists
+        const existingusername = await db.query(
+            "SELECT id FROM users WHERE username = $1",
+            [username]
+        );
 
-        //Check whether email or password is incorrect
+        if (existingusername.rows.length > 0) {
+            return res.status(409).json({
+                message : "Username Already Exists"
+            });
+        }
+        
+        //Hash Password
+        const hashedPassword = await hashPassword(password)
+        
+        //Insert User Details in DB
+        const statement = db.query(`
+            INSERT INTO users (name, username, email, password)
+            VALUES ($1, $2, $3, $4)
+            RETURNING id`,
+            [
+                name,
+                username,
+                email,
+                hashedPassword
+            ]
+        );
+
+        return res.status(201).json({
+            message : "User Registered Successfully",
+        });
+    }
+    catch (error) {
+        console.error("Register Error: ",error);
+        return res.status(500).json({
+            message : "Internal Server Error"
+        });      
+    }
+});
+
+//Login
+
+router.post("/login", async (req,res) => {
+    try{
+        const { identifier, password } = req.body;
+        
+        //Basic Validation
+        if ( !identifier || !password ) {
+            return res.status(400).json({
+                message : "Email/Username and Password are Required"
+            });
+        }
+
+        //Finding User By Email Or Username
+        const result = await db.query(
+            `SELECT * FROM users
+            WHERE email = $1 OR username = $1
+            LIMIT 1`,
+            [identifier]
+        );
+
+        const user = result.rows[0];
+
+        //User Not Found Error
         if (!user) {
             return res.status(401).json({
                 message : "Invalid Credentials"
             });
         }
+        
 
         //Compare Password using stored bcrypt hash
         const passwordMatches = await comparePassword(
