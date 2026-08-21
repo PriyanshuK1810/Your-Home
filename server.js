@@ -3,8 +3,9 @@ require("dotenv").config();
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
-
 const authRoutes = require('./backend/routes/auth');
+const homeRoutes = require("./backend/routes/homeRoute");
+const cookieparser = require("cookie-parser");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,18 +14,41 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieparser());
 
 //Authentication Routes
 app.use('/api', authRoutes);
+app.use('/api', homeRoutes);
+app.use(express.static(path.join(__dirname, "Login page")));
+
+
+//Authenticaton Pages
+app.get("/login", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "Login page", "login.html")
+  );
+});
+
+app.get("/register", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "Login page", "register.html")
+  );
+});
 
 const fs = require('fs');
-
+const cookieParser = require("cookie-parser");
+const authMiddleware = require("./backend/middleware/authMiddleware");
 // Serve static frontend files from Frontend/dist if built, otherwise from public/
-const frontendDist = path.join(__dirname, 'Frontend', 'dist');
+const frontendDist = path.join(__dirname, 'Frontend', "dist");
 if (fs.existsSync(frontendDist)) {
-  app.use(express.static(frontendDist));
+  app.use(
+    express.static(frontendDist, {
+    index: false
+    })
+  );
 }
-app.use(express.static(path.join(__dirname, 'public')));
+
+
 
 // --------------------------------------------------------------------------
 // LOCATION & TAX RATES DATA (Indian Real Estate Benchmark Rates)
@@ -651,14 +675,27 @@ app.get(['/about', '/about-us', '/about.html'], (req, res) => {
 // --------------------------------------------------------------------------
 // React Frontend Home Route — serves the React SPA for '/' and '/home'
 // --------------------------------------------------------------------------
-app.get(['/', '/home'], (req, res) => {
-  const reactIndex = path.join(frontendDist, 'index.html');
+app.get(["/", "/home"], authMiddleware, (req, res) => {
+  const reactIndex = 
+    path.join(
+      frontendDist,
+      "index.html"
+  );
+
   if (fs.existsSync(reactIndex)) {
     return res.sendFile(reactIndex);
   }
   // Fallback: redirect to EMI calculator if React build is missing
-  res.redirect('/emi-calculator');
+  return res.status(404).send(
+     "HomePage Not Found"
+  );
 });
+
+app.use(
+  express.static(
+    path.join(__dirname, "/public")
+  )
+)
 
 // Start Server
 app.listen(PORT, () => {

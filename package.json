@@ -24,12 +24,17 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "better-sqlite3": "^13.0.3",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.4.2",
     "express": "^4.21.2",
-    "jsonwebtoken": "^9.0.3"
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.23.0"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
+  },
+  "allowScripts": {
+    "pg@8.23.0": true
   }
 }
