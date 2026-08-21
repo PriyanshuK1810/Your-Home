@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const loginForm = document.getElementById("loginForm");
 
-    const emailInput = document.getElementById("email");
+    const identifierInput = document.getElementById("identifier");
 
     const passwordInput = document.getElementById("password");
 
@@ -200,54 +200,14 @@ document.addEventListener("DOMContentLoaded", () => {
     /* =====================================================
        EMAIL VALIDATION
     ===================================================== */
-
-    function isValidEmail(email) {
-
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-            .test(email);
-
+    function validateUsername(username) {
+        return /^[a-zA-Z0-9_]{3,30}$/.test(username);
     }
+    function validateEmail(email) {
+        const emailPattern =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-
-    function validateEmail(showMessage = true) {
-
-        const email =
-            emailInput.value.trim();
-
-
-        if (email === "") {
-
-            if (showMessage) {
-
-                showInputError(
-                    emailInput,
-                    "Email is required."
-                );
-
-            }
-
-            return false;
-        }
-
-
-        if (!isValidEmail(email)) {
-
-            if (showMessage) {
-
-                showInputError(
-                    emailInput,
-                    "Please enter a valid email."
-                );
-
-            }
-
-            return false;
-        }
-
-
-        clearInputError(emailInput);
-
-        return true;
+        return emailPattern.test(email);
     }
 
 
@@ -307,7 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let error =
             input.parentElement.parentElement
-            .querySelector(".input-error-message");
+                .querySelector(".input-error-message");
 
 
         if (!error) {
@@ -334,7 +294,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const error =
             input.parentElement.parentElement
-            .querySelector(".input-error-message");
+                .querySelector(".input-error-message");
 
 
         if (error) {
@@ -349,22 +309,10 @@ document.addEventListener("DOMContentLoaded", () => {
        REAL-TIME EMAIL VALIDATION
     ===================================================== */
 
-    emailInput.addEventListener("input", () => {
-
-        if (emailInput.value.trim() === "") {
-
-            clearInputError(emailInput);
-
-            return;
+    identifierInput.addEventListener("input", () => {
+        if (identifierInput.value.trim() !== "") {
+            clearInputError(identifierInput);
         }
-
-
-        if (isValidEmail(emailInput.value.trim())) {
-
-            clearInputError(emailInput);
-
-        }
-
     });
 
 
@@ -387,16 +335,14 @@ document.addEventListener("DOMContentLoaded", () => {
        REMEMBER ME
     ===================================================== */
 
-    const savedEmail =
-        localStorage.getItem("yourhome_email");
+    const savedIdentifier =
+        localStorage.getItem("yourhome_identifier");
 
 
-    if (savedEmail) {
+    if (savedIdentifier) {
 
-        emailInput.value = savedEmail;
-
+        identifierInput.value = savedIdentifier;
         rememberMe.checked = true;
-
     }
 
 
@@ -405,110 +351,102 @@ document.addEventListener("DOMContentLoaded", () => {
     ===================================================== */
 
     loginForm.addEventListener("submit", async (event) => {
-
         event.preventDefault();
+        const identifier = identifierInput.value.trim();
+        const password = passwordInput.value;
 
-
-        const emailValid =
-            validateEmail(true);
+        const identifierValid =
+            validateEmail(identifier) ||
+            validateUsername(identifier);
 
         const passwordValid =
-            validatePassword(true);
+            validatePassword(password) 
+            
 
-
-        if (!emailValid || !passwordValid) {
-
+        if (!identifierValid || !passwordValid) {
             showToast(
-                "Please correct the highlighted fields.",
+                "Please Correct the Highlighted fields.",
                 "error"
             );
-
             return;
         }
 
-
-        /* Remember email */
+        //Remember Me 
         if (rememberMe.checked) {
-
             localStorage.setItem(
-                "yourhome_email",
-                emailInput.value.trim()
+                "yourhome_identifier"
             );
-
         }
-
         else {
-
             localStorage.removeItem(
-                "yourhome_email"
+                "yourhome_identifier"
             );
-
         }
 
-
-        /* Prevent double click */
-
+        //Prevent Double-click
         if (loginButton.disabled) {
-
             return;
-
         }
-
-
         loginButton.disabled = true;
+        loginButton.classList.add("Loading");
 
-        loginButton.classList.add("loading");
-
-
-        /* Save original button */
-        const originalButton =
-            loginButton.innerHTML;
-
-
-        loginButton.innerHTML = `
-            <span class="login-loading">
+        const originalButton = loginButton.innerHTML;
+        loginButton.innerHTML =
+            `<span class="login-loading">
                 <i class="fa-solid fa-spinner fa-spin"></i>
                 Signing in...
-            </span>
-        `;
+            </span>`
+            ;
 
+        try {
+            const response = await fetch("/api/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    identifier: identifier,
+                    password: password
+                })
+            });
 
-        /*
-         * Simulated login request.
-         *
-         * Replace this section later with
-         * your actual backend API.
-         */
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(
+                    data.message || "Login failed"
+                );
+            }
+            localStorage.setItem(
+                "token",
+                data.token
+            );
 
-        await new Promise(resolve => {
+            if (data.user) {
+                localStorage.setItem(
+                    "yourHome_user",
+                    JSON.stringify(data.user)
+                );
+            }
 
-            setTimeout(resolve, 1500);
+            showToast(
+                "Login Successful",
+                "success"
+            );
 
-        });
-
-
-        /* Login success */
-
-        loginButton.classList.remove("loading");
-
-        loginButton.disabled = false;
-
-        loginButton.innerHTML =
-            originalButton;
-
-
-        showToast(
-            "Login successful! Welcome back.",
-            "success"
-        );
-
-
-        /*
-         * Later you can redirect:
-         *
-         * window.location.href = "dashboard.html";
-         */
-
+            setTimeout(() => {
+                window.location.href = "/";
+            }, 700);
+        }
+        catch (error) {
+            console.error("Login Error: ", error);
+            showToast(
+                error.message || "Unable to Login. Please try Again",
+                "error"
+            );
+            loginButton.disabled = false;
+            loginButton.classList.remove("Loading")
+            loginButton.innerHTML = originalButton
+        }
     });
 
 
@@ -519,43 +457,10 @@ document.addEventListener("DOMContentLoaded", () => {
     forgotPassword.addEventListener("click", (event) => {
 
         event.preventDefault();
-
-
-        const email =
-            emailInput.value.trim();
-
-
-        if (!email) {
-
-            emailInput.focus();
-
-            showToast(
-                "Enter your email first to reset your password.",
-                "warning"
-            );
-
-            return;
-        }
-
-
-        if (!isValidEmail(email)) {
-
-            showToast(
-                "Please enter a valid email address.",
-                "error"
-            );
-
-            emailInput.focus();
-
-            return;
-        }
-
-
         showToast(
-            `Password reset instructions will be sent to ${email}.`,
-            "success"
+            "Password Reset Functionality is not available yet",
+            "warning"
         );
-
     });
 
 
@@ -566,19 +471,13 @@ document.addEventListener("DOMContentLoaded", () => {
     registerLink.addEventListener("click", (event) => {
 
         event.preventDefault();
+        window.location.href = "/register";
 
 
         showToast(
             "Opening the registration page...",
             "success"
         );
-
-
-        /*
-         * Replace with:
-         *
-         * window.location.href = "register.html";
-         */
 
     });
 
@@ -673,7 +572,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 else {
 
                     backgroundVideo.play()
-                        .catch(() => {});
+                        .catch(() => { });
 
                 }
 
@@ -766,7 +665,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-const loginForm = document.getElementById("loginForm");
+/*const loginForm = document.getElementById("loginForm");
 
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
@@ -819,34 +718,36 @@ function clearErrors() {
 // EMAIL REAL-TIME VALIDATION
 // ===============================
 
-emailInput.addEventListener("input", function () {
+identifierInput.addEventListener("input", function () {
 
-    const email = emailInput.value.trim();
+    const identifier = identifierInput.value.trim();
 
-    if (email === "") {
+    if (identifier === "") {
 
-        emailError.textContent = "Email is required";
+        identifierError.textContent = "Email or username is required";
 
-        emailInput.parentElement.classList.add("error");
-        emailInput.parentElement.classList.remove("success");
+        identifierInput.parentElement.classList.add("error");
+        identifierInput.parentElement.classList.remove("success");
 
-    } else if (!validateEmail(email)) {
+    } else if (
+        !validateEmail(identifier) &&
+        !validateUsername(identifier)
+    ) {
 
-        emailError.textContent =
-            "Please enter a valid email address";
+        identifierError.textContent =
+            "Please enter a valid email address or username";
 
-        emailInput.parentElement.classList.add("error");
-        emailInput.parentElement.classList.remove("success");
+        identifierInput.parentElement.classList.add("error");
+        identifierInput.parentElement.classList.remove("success");
 
     } else {
 
-        emailError.textContent = "";
+        identifierError.textContent = "";
 
-        emailInput.parentElement.classList.remove("error");
-        emailInput.parentElement.classList.add("success");
+        identifierInput.parentElement.classList.remove("error");
+        identifierInput.parentElement.classList.add("success");
     }
 });
-
 
 // ===============================
 // PASSWORD VALIDATION
@@ -1029,4 +930,4 @@ loginForm.addEventListener("submit", function (event) {
 
     }, 1500);
 
-});
+*/

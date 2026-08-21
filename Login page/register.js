@@ -30,6 +30,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const registerButton =
         document.getElementById("registerButton");
 
+    const registerRoute = "http://localhost:5000/api/register"
+
 
     /* ===============================
        VALIDATION FUNCTIONS
@@ -105,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
        FORM SUBMIT
     =============================== */
 
-    form.addEventListener("submit", (event) => {
+    form.addEventListener("submit", async (event) => {
 
         event.preventDefault();
 
@@ -230,166 +232,153 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        /* ===============================
-           CHECK EXISTING ACCOUNT
-        =============================== */
+        // Register User With Backend
 
-        const existingUser =
-            localStorage.getItem("registeredUser");
+        registerButton.disabled = true;
+        registerButton.classList.add("Loading");
 
+        try {
+            const response = await fetch(registerRoute, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
 
-        if (existingUser) {
+                body: JSON.stringify({
+                    name: nameValue,
+                    username: usernameValue,
+                    email: emailValue,
+                    password: passwordValue
+                })
+            });
+            const data = await response.json();
 
-            const user =
-                JSON.parse(existingUser);
+            //Backend Error
 
-
-            if (
-                user.email.toLowerCase() ===
-                emailValue
-            ) {
-
-                emailError.textContent =
-                    "This email is already registered.";
-
+            if (!response.ok) {
+                if (response.status === 409) {
+                    if (
+                        data.message
+                            .toLowerCase()
+                            .includes("email")
+                    ) {
+                        emailError.textContent = "This Email is already registered";
+                    }
+                    else if (
+                        data.message
+                            .toLowerCase()
+                            .includes("username")
+                    ) {
+                        usernameError.textContent = "This Username is already taken";
+                    }
+                    else {
+                        registerMessage.textContent = data.message;
+                        registerMessage.className = "Register-Message Error";
+                    }
+                }
+                else {
+                    registerMessage.textContent = data.message || "Registration Failed";
+                    registerMessage.className = "Register-Message Error";
+                }
+                registerButton.disabled = false;
+                registerButton.classList.remove("Loading");
                 return;
-
             }
 
 
-            if (
-                user.username.toLowerCase() ===
-                usernameValue.toLowerCase()
-            ) {
 
-                usernameError.textContent =
-                    "This username is already taken.";
+            //Success
+            registerMessage.textContent =
+                "Account created successfully!";
 
-                return;
+            registerMessage.className =
+                "register-message success";
+            ;
 
-            }
 
+            //Redirect To Login    
+            setTimeout(() => {
+
+                window.location.href = "/login";
+
+            }, 1200);
+        }
+        catch (error) {
+            console.error("Registration Error: ", error);
+            registerMessage.textContent = "Unable to connect to Server";
+            registerMessage.className = "Register-Message Error";
+            registerButton.disabled = false;
+            registerButton.classList.remove("Loading");
         }
 
 
-        /* ===============================
-           CREATE ACCOUNT
-        =============================== */
-
-        const user = {
-
-            name: nameValue,
-
-            username: usernameValue,
-
-            email: emailValue,
-
-            password: passwordValue
-
-        };
-
-
-        localStorage.setItem(
-            "registeredUser",
-            JSON.stringify(user)
-        );
-
-
-        /* ===============================
-           SUCCESS
-        =============================== */
-
-        registerMessage.textContent =
-            "Account created successfully!";
-
-        registerMessage.className =
-            "register-message success";
-
-
-        registerButton.disabled = true;
-
-        registerButton.classList.add("loading");
-
-
-        /* ===============================
-           REDIRECT TO LOGIN
-        =============================== */
-
-        setTimeout(() => {
-
-            window.location.href = "index.html";
-
-        }, 1200);
-
     });
 
-});
+    document.addEventListener("DOMContentLoaded", () => {
 
-document.addEventListener("DOMContentLoaded", () => {
-
-    const footerLinks =
-        document.querySelectorAll(".footer-links a");
+        const footerLinks =
+            document.querySelectorAll(".footer-links a");
 
 
-    footerLinks.forEach((link) => {
+        footerLinks.forEach((link) => {
 
-        link.addEventListener("click", (event) => {
+            link.addEventListener("click", (event) => {
 
-            const target =
-                link.getAttribute("href");
+                const target =
+                    link.getAttribute("href");
 
 
-            // If the page does not exist yet
-            if (!target || target === "#") {
+                // If the page does not exist yet
+                if (!target || target === "#") {
 
-                event.preventDefault();
+                    event.preventDefault();
 
-                showFooterMessage(
-                    `${link.textContent.trim()} page is coming soon.`
-                );
+                    showFooterMessage(
+                        `${link.textContent.trim()} page is coming soon.`
+                    );
 
-            }
+                }
+
+            });
 
         });
 
+
+        /* =========================================
+           FOOTER MESSAGE
+        ========================================== */
+
+        function showFooterMessage(message) {
+
+            let toast =
+                document.getElementById("footerToast");
+
+
+            // Create toast if it doesn't exist
+            if (!toast) {
+
+                toast = document.createElement("div");
+
+                toast.id = "footerToast";
+
+                toast.className = "footer-toast";
+
+                document.body.appendChild(toast);
+
+            }
+
+
+            toast.textContent = message;
+
+            toast.classList.add("show");
+
+
+            setTimeout(() => {
+
+                toast.classList.remove("show");
+
+            }, 2500);
+
+        };
     });
-
-
-    /* =========================================
-       FOOTER MESSAGE
-    ========================================== */
-
-    function showFooterMessage(message) {
-
-        let toast =
-            document.getElementById("footerToast");
-
-
-        // Create toast if it doesn't exist
-        if (!toast) {
-
-            toast = document.createElement("div");
-
-            toast.id = "footerToast";
-
-            toast.className = "footer-toast";
-
-            document.body.appendChild(toast);
-
-        }
-
-
-        toast.textContent = message;
-
-        toast.classList.add("show");
-
-
-        setTimeout(() => {
-
-            toast.classList.remove("show");
-
-        }, 2500);
-
-    }
-
 });
