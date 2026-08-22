@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import PopularTools from './components/PopularTools';
-import WhyChooseUs from './components/WhyChooseUs';
-import FutureHomeCTA from './components/FutureHomeCTA';
-import PropertyBrowse from './components/PropertyBrowse';
-import Footer from './components/Footer';
-import ToolModal from './components/ToolModal';
-import PropertyModal from './components/PropertyModal';
-import { toolsData } from './data/toolsData';
+import Navbar from '@/components/layout/Navbar';
+import Footer from '@/components/layout/Footer';
+import Hero from '@/features/home-hero/Hero';
+import PopularTools from '@/features/popular-tools/PopularTools';
+import WhyChooseUs from '@/components/common/WhyChooseUs';
+import FutureHomeCTA from '@/components/common/FutureHomeCTA';
+import PropertyBrowse from '@/features/property-browse/PropertyBrowse';
+import ToolModal from '@/components/modals/ToolModal';
+import PropertyModal from '@/components/modals/PropertyModal';
+import { toolsData } from '@/data/toolsData';
 
 export default function App() {
   // Saved properties state

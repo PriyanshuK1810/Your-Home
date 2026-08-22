@@ -23,8 +23,7 @@
   "author": "Your Home Team",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^6.0.0",
-    "better-sqlite3": "^13.0.3",
+    "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.4.2",
