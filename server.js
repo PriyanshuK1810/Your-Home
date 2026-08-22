@@ -698,16 +698,20 @@ app.use(
 )
 
 // Start Server
-app.listen(PORT, () => {
-  console.log(`=======================================================`);
-  console.log(`🚀 Your Home Calculators server running on http://localhost:${PORT}`);
-  console.log(`📊 EMI Calculator: http://localhost:${PORT}/`);
-  console.log(`🏠 True Cost Calculator: http://localhost:${PORT}/true-cost`);
-  console.log(`📈 Rental ROI Calculator: http://localhost:${PORT}/rental-roi`);
-  console.log(`💰 Affordability Check: http://localhost:${PORT}/affordability`);
-  console.log(`🛡️ Risk Analysis: http://localhost:${PORT}/risk-analysis`);
-  console.log(`⚖️ Buy vs Rent: http://localhost:${PORT}/buy-vs-rent`);
-  console.log(`=======================================================`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`=======================================================`);
+    console.log(`🚀 Your Home Calculators server running on http://localhost:${PORT}`);
+    console.log(`📊 EMI Calculator: http://localhost:${PORT}/`);
+    console.log(`🏠 True Cost Calculator: http://localhost:${PORT}/true-cost`);
+    console.log(`📈 Rental ROI Calculator: http://localhost:${PORT}/rental-roi`);
+    console.log(`💰 Affordability Check: http://localhost:${PORT}/affordability`);
+    console.log(`🛡️ Risk Analysis: http://localhost:${PORT}/risk-analysis`);
+    console.log(`⚖️ Buy vs Rent: http://localhost:${PORT}/buy-vs-rent`);
+    console.log(`=======================================================`);
+  });
+}
+
+module.exports = { app };
 
 
