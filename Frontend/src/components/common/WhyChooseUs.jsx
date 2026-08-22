@@ -1,5 +1,5 @@
 import React from 'react';
-import { benefitsData } from '../data/toolsData';
+import { benefitsData } from '@/data/toolsData';
 import { UserCheck, Target, Clock, Shield } from 'lucide-react';
 
 const benefitIcons = {

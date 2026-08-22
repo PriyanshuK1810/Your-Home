@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const registerButton =
         document.getElementById("registerButton");
 
-    const registerRoute = "http://localhost:5000/api/register"
+    const registerRoute = "/api/register";
 
 
     /* ===============================

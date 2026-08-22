@@ -1,33 +1,33 @@
 // Location-Specific Property Mock Dataset
 // Mumbai assets
-import mumbai1 from '../assets/properties/mumbai/mumbai_1.jpg';
-import mumbai2 from '../assets/properties/mumbai/mumbai_2.jpg';
-import mumbai3 from '../assets/properties/mumbai/mumbai_3.jpg';
+import mumbai1 from '@/assets/images/properties/mumbai/mumbai_1.jpg';
+import mumbai2 from '@/assets/images/properties/mumbai/mumbai_2.jpg';
+import mumbai3 from '@/assets/images/properties/mumbai/mumbai_3.jpg';
 
 // Delhi assets
-import delhi1 from '../assets/properties/delhi/delhi_1.jpg';
-import delhi2 from '../assets/properties/delhi/delhi_2.jpg';
-import delhi3 from '../assets/properties/delhi/delhi_3.jpg';
+import delhi1 from '@/assets/images/properties/delhi/delhi_1.jpg';
+import delhi2 from '@/assets/images/properties/delhi/delhi_2.jpg';
+import delhi3 from '@/assets/images/properties/delhi/delhi_3.jpg';
 
 // Gurugram assets
-import gurugram1 from '../assets/properties/gurugram/gurugram_1.jpg';
-import gurugram2 from '../assets/properties/gurugram/gurugram_2.jpg';
-import gurugram3 from '../assets/properties/gurugram/gurugram_3.jpg';
+import gurugram1 from '@/assets/images/properties/gurugram/gurugram_1.jpg';
+import gurugram2 from '@/assets/images/properties/gurugram/gurugram_2.jpg';
+import gurugram3 from '@/assets/images/properties/gurugram/gurugram_3.jpg';
 
 // Bengaluru assets
-import bengaluru1 from '../assets/properties/bengaluru/bengaluru_1.jpg';
-import bengaluru2 from '../assets/properties/bengaluru/bengaluru_2.jpg';
-import bengaluru3 from '../assets/properties/bengaluru/bengaluru_3.jpg';
+import bengaluru1 from '@/assets/images/properties/bengaluru/bengaluru_1.jpg';
+import bengaluru2 from '@/assets/images/properties/bengaluru/bengaluru_2.jpg';
+import bengaluru3 from '@/assets/images/properties/bengaluru/bengaluru_3.jpg';
 
 // Hyderabad assets
-import hyderabad1 from '../assets/properties/hyderabad/hyderabad_1.jpg';
-import hyderabad2 from '../assets/properties/hyderabad/hyderabad_2.jpg';
-import hyderabad3 from '../assets/properties/hyderabad/hyderabad_3.jpg';
+import hyderabad1 from '@/assets/images/properties/hyderabad/hyderabad_1.jpg';
+import hyderabad2 from '@/assets/images/properties/hyderabad/hyderabad_2.jpg';
+import hyderabad3 from '@/assets/images/properties/hyderabad/hyderabad_3.jpg';
 
 // Greater Noida assets
-import greaterNoida1 from '../assets/properties/greater-noida/greater_noida_1.jpg';
-import greaterNoida2 from '../assets/properties/greater-noida/greater_noida_2.jpg';
-import greaterNoida3 from '../assets/properties/greater-noida/greater_noida_3.jpg';
+import greaterNoida1 from '@/assets/images/properties/greater-noida/greater_noida_1.jpg';
+import greaterNoida2 from '@/assets/images/properties/greater-noida/greater_noida_2.jpg';
+import greaterNoida3 from '@/assets/images/properties/greater-noida/greater_noida_3.jpg';
 
 export const propertiesData = [
   // MUMBAI PROPERTIES

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { propertiesData } from '../data/propertiesData';
+import { propertiesData } from '@/data/propertiesData';
 import { Bookmark, MapPin, Bed, Bath, Maximize, ArrowRight } from 'lucide-react';
 import PropertyImageSlider from './PropertyImageSlider';
 

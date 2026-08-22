@@ -1,5 +1,5 @@
 import React from 'react';
-import { toolsData } from '../data/toolsData';
+import { toolsData } from '@/data/toolsData';
 import { 
   Calculator, 
   Home, 

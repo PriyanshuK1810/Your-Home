@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowRight, Calculator, Check } from 'lucide-react';
-import heroImg from '../assets/hero_building.png';
+import heroImg from '@/assets/images/backgrounds/hero_building.png';
 
 export default function Hero({ onOpenAffordability }) {
   const smartFeatures = [
