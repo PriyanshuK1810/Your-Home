@@ -19,6 +19,9 @@ app.use(cookieparser());
 //Authentication Routes
 app.use('/api', authRoutes);
 app.use('/api', homeRoutes);
+
+// Static Assets Route
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use(express.static(path.join(__dirname, "Login page")));
 
 

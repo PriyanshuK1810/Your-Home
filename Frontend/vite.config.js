@@ -19,6 +19,10 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:5000',
         changeOrigin: true,
+      },
+      '/assets': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
       }
     }
   }
